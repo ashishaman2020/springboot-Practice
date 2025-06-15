@@ -1,8 +1,10 @@
 package com.example.JournalsAndAuthors.controller;
 
 import com.example.JournalsAndAuthors.model.UserEntry;
+import com.example.JournalsAndAuthors.response.WeatherResponse;
 import com.example.JournalsAndAuthors.service.JournalEntryService;
 import com.example.JournalsAndAuthors.service.UserEntryService;
+import com.example.JournalsAndAuthors.service.WeatherService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -15,11 +17,13 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserEntryController {
     private final UserEntryService userEntryService;
-    public UserEntryController(UserEntryService userEntryService) {
+    private final WeatherService weatherService;
+    public UserEntryController(UserEntryService userEntryService, WeatherService weatherService) {
         this.userEntryService = userEntryService;
+        this.weatherService = weatherService;
     }
 
-    @GetMapping()
+    @GetMapping
     public List<UserEntry> getAllUsers() {
         return userEntryService.getAllUsers();
     }
@@ -50,5 +54,12 @@ public class UserEntryController {
     @DeleteMapping("/delete/{id}")
     public void deleteUser(@PathVariable Integer id) {
         userEntryService.deleteUser(id);
+    }
+
+    @GetMapping("/greeting")
+    public ResponseEntity<?> greeting() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        WeatherResponse weatherResponse = weatherService.getWeather("Bangalore");
+        return new ResponseEntity<>("Hi " + auth.getName() + ", weather feels like " + weatherResponse.getCurrent().getFeelsLike(), HttpStatus.OK);
     }
 }
