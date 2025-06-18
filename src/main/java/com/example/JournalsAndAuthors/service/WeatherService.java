@@ -1,5 +1,6 @@
 package com.example.JournalsAndAuthors.service;
 
+import com.example.JournalsAndAuthors.cache.AppCache;
 import com.example.JournalsAndAuthors.response.WeatherResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,14 +13,15 @@ import org.springframework.web.client.RestTemplate;
 public class WeatherService {
     @Value("${weather.service.apikey}")
     private String apiKey;
-    @Value("${weather.service.url}")
-    private String API;
 
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private AppCache appCache;
+
     public WeatherResponse getWeather(String city) {
-        String finalApi = API.replace("API_KEY", apiKey).replace("CITY", city);
+        String finalApi = appCache.APP_CACHE.get("weather_service_url").replace("<api_key>", apiKey).replace("<city>", city);
         ResponseEntity<WeatherResponse> response = restTemplate.exchange(finalApi, HttpMethod.GET, null, WeatherResponse.class);
         WeatherResponse res = response.getBody();
         return res;
