@@ -10,7 +10,7 @@ public class AppCacheScheduler {
     @Autowired
     private AppCache appCache;
 
-    @Scheduled(cron = "0 0/10 * 1/1 * ? *")
+    @Scheduled(cron = "0 0/10 * 1/1 * ?")
     public void clearAppCache() {
         appCache.init();
     }
